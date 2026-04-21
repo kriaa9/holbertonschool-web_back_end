@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Module that demonstrates mypy-compliant type annotations for zooming arrays."""
+"""Module with mypy-compliant annotations for zooming tuple values."""
 
 from typing import List, Tuple
 
