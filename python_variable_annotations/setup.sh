@@ -14,4 +14,7 @@ chmod +x \
   7-to_kv.py \
   8-make_multiplier.py \
   9-element_length.py \
+  100-safe_first_element.py \
+  101-safely_get_value.py \
+  102-type_checking.py \
   setup.sh
