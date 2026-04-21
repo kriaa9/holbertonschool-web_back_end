@@ -8,6 +8,7 @@ using explicit type hints to describe inputs and outputs in a readable way.
 - Understand and apply type annotations in Python.
 - Use the typing module primitives for richer function signatures.
 - Explain duck typing with Iterable and Sequence based contracts.
+- Use TypeVar to model relationships between default values and return types.
 - Validate annotation-focused code quality with pycodestyle.
 
 ## Requirements
@@ -32,6 +33,9 @@ using explicit type hints to describe inputs and outputs in a readable way.
 | 7-to_kv.py | to_kv(k: str, v: Union[int, float]) -> Tuple[str, float] | Returns (k, float(v * v)) |
 | 8-make_multiplier.py | make_multiplier(multiplier: float) -> Callable[[float], float] | Returns closure multiplying by multiplier |
 | 9-element_length.py | element_length(lst: Iterable[Sequence]) -> List[Tuple[Sequence, int]] | Returns (element, len(element)) pairs |
+| 100-safe_first_element.py | safe_first_element(lst: Sequence[Any]) -> Optional[Any] | Returns first element or None for empty sequences |
+| 101-safely_get_value.py | safely_get_value(dct: Mapping, key: Any, default: Optional[T] = None) -> Union[Any, T] | Returns mapping value when present, else typed default |
+| 102-type_checking.py | zoom_array(lst: Tuple, factor: int = 2) -> List | Passes mypy and returns repeated list values |
 
 ## Task-by-Task Explanation
 
@@ -83,6 +87,24 @@ This task demonstrates duck typing through Iterable and Sequence.
 Any iterable of sequence-like items is accepted as input.
 The function returns tuples of each element with its computed length.
 
+### Task 10: safe_first_element
+
+This task uses duck typing with Sequence[Any].
+The function safely reads the first element only when the sequence is not empty.
+Optional[Any] models that None can be returned when no element exists.
+
+### Task 11: safely_get_value
+
+This task introduces TypeVar for default-value typing.
+The function accepts a generic mapping and returns either a stored value or default.
+The return annotation Union[Any, T] reflects both possible execution paths.
+
+### Task 12: type checking
+
+This task aligns annotations with runtime behavior and mypy validation.
+The function signature advertises Tuple input, int factor, and List return.
+Inputs and call sites are updated so static type checking succeeds.
+
 ## Mermaid Diagrams
 
 ### Flowchart
@@ -104,12 +126,19 @@ classDiagram
  class Callable
  class Iterable
  class Sequence
+class Any
+class Optional
+class Mapping
+class TypeVar
 
  class Task5["Task 5\nsum_list"]
  class Task6["Task 6\nsum_mixed_list"]
  class Task7["Task 7\nto_kv"]
  class Task8["Task 8\nmake_multiplier"]
  class Task9["Task 9\nelement_length"]
+class Task10["Task 10\nsafe_first_element"]
+class Task11["Task 11\nsafely_get_value"]
+class Task12["Task 12\nzoom_array"]
 
  Task5 --> List : uses
  Task6 --> List : uses
@@ -121,6 +150,15 @@ classDiagram
  Task9 --> Sequence : uses
  Task9 --> List : returns
  Task9 --> Tuple : returns
+Task10 --> Sequence : uses
+Task10 --> Any : uses
+Task10 --> Optional : returns
+Task11 --> Mapping : uses
+Task11 --> Any : uses
+Task11 --> TypeVar : uses
+Task11 --> Union : returns
+Task12 --> Tuple : input
+Task12 --> List : returns
 ```
 
 ### Sequence Diagram for Task 8
@@ -255,6 +293,51 @@ Expected stdout:
 ```text
 [('Hello', 5), ('World', 5), ('Python', 6)]
 {'lst': typing.Iterable[typing.Sequence], 'return': typing.List[typing.Tuple[typing.Sequence, int]]}
+```
+
+### Task 10
+
+```bash
+chmod +x 100-safe_first_element.py 100-main.py
+./100-main.py
+```
+
+Expected stdout:
+
+```text
+{'lst': typing.Sequence[typing.Any], 'return': typing.Optional[typing.Any]}
+```
+
+### Task 11
+
+```bash
+chmod +x 101-safely_get_value.py 101-main.py
+./101-main.py
+```
+
+Expected stdout:
+
+```text
+Here's what the mappings should look like
+dct: typing.Mapping
+key: typing.Any
+default: typing.Union[~T, NoneType]
+return: typing.Union[typing.Any, ~T]
+```
+
+### Task 12
+
+```bash
+chmod +x 102-type_checking.py 102-main.py
+mypy 102-type_checking.py
+./102-main.py
+```
+
+Expected stdout:
+
+```text
+Success: no issues found in 1 source file
+{'lst': typing.Tuple, 'factor': <class 'int'>, 'return': typing.List}
 ```
 
 ## Author
